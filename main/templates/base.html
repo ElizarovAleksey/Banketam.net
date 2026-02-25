@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Банкетам.Нет</title>
+</head>
+<body>
+
+    <h1>Портал "Банкетам.Нет"</h1>
+
+    {% if user.username == "Admin26" %}
+    | <a href="{% url 'admin_panel' %}">Панель администратора</a>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <p>
+            Вы вошли как: {{ user.username }} |
+            <a href="{% url 'cabinet' %}">Личный кабинет</a> |
+            <a href="{% url 'logout' %}">Выйти</a>
+        </p>
+    {% else %}
+    
+        <p>
+            <a href="{% url 'login' %}">Войти</a> |
+            <a href="{% url 'register' %}">Регистрация</a>
+        </p>
+    {% endif %}
+
+    <hr>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

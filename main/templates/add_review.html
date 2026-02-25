@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Оставить отзыв</h2>
+
+<p>Помещение: {{ booking.venue.name }}</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Оценка (1-5):</label>
+    <input type="number" name="rating" min="1" max="5" required>
+
+    <br><br>
+
+    <label>Текст отзыва:</label><br>
+    <textarea name="text" rows="4" cols="40" required></textarea>
+
+    <br><br>
+
+    <button type="submit">Сохранить отзыв</button>
+</form>
+
+{% endblock %}

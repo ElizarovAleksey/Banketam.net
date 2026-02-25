@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Панель администратора</h2>
+
+<h3>Все заявки:</h3>
+
+{% if bookings %}
+    <ul>
+        {% for booking in bookings %}
+            <li>
+                Пользователь: {{ booking.user.username }} |
+                Помещение: {{ booking.venue.name }} |
+                Дата: {{ booking.start_datetime }} |
+                Статус: {{ booking.get_status_display }}
+
+                {% if booking.status == 'new' %}
+                    | <a href="{% url 'update_booking_status' booking.id 'confirmed' %}">Назначить</a>
+                {% endif %}
+
+                {% if booking.status == 'confirmed' %}
+                    | <a href="{% url 'update_booking_status' booking.id 'completed' %}">Завершить</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Заявок пока нет.</p>
+{% endif %}
+
+{% endblock %}

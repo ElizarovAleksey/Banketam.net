@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+  <div class="title">Добро пожаловать!</div>
+  <div class="muted">
+    «Банкетам.Нет» — сервис бронирования зон банкетного комплекса.
+    Выберите помещение и оформите заявку онлайн.
+  </div>
+
+  <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+    {% if user.is_authenticated %}
+      <a class="btn btn-primary" href="{% url 'cabinet' %}">Перейти в кабинет</a>
+      <a class="btn" href="{% url 'create_booking' %}">Оформить заявку</a>
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'login' %}">Войти</a>
+      <a class="btn" href="{% url 'register' %}">Регистрация</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="title">Наши помещения</div>
+
+  {% if venues %}
+    {% for v in venues %}
+      <div class="card" style="margin:12px 0;">
+        <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+          <div>
+            <div><strong>{{ v.name }}</strong></div>
+            <div class="muted">Тип: {{ v.get_type_display }}</div>
+            <div class="muted">Вместимость: {{ v.capacity }} чел.</div>
+          </div>
+          <span class="badge">{{ v.get_type_display }}</span>
+        </div>
+        <div style="margin-top:10px;">{{ v.description }}</div>
+
+        {% if user.is_authenticated %}
+          <div style="margin-top:10px;">
+            <a class="btn btn-primary" href="{% url 'create_booking' %}">Забронировать</a>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="muted">Помещения пока не добавлены. Добавьте их через админку.</p>
+  {% endif %}
+</div>
+{% endblock %}

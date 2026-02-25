@@ -5,9 +5,14 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegisterForm, BookingForm
-from .models import Booking
+from .models import Booking, Venue, Review
 
-
+# ===============================
+# Главная
+# ===============================
+def home_view(request):
+    venues = Venue.objects.all()
+    return render(request, 'home.html', {'venues': venues})
 
 # ===============================
 # Регистрация
@@ -76,7 +81,7 @@ def create_booking_view(request):
     return render(request, 'create_booking.html', {'form': form})
 
 from django.contrib.auth.decorators import user_passes_test
-from .models import Booking
+
 
 
 # Проверка: пользователь — администратор

@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegisterForm, BookingForm
 from .models import Booking
+
 
 
 # ===============================
@@ -84,8 +87,39 @@ def is_admin(user):
 # Панель администратора
 @user_passes_test(is_admin)
 def admin_panel_view(request):
-    bookings = Booking.objects.all().order_by('-created_at')
-    return render(request, 'admin_panel.html', {'bookings': bookings})
+    qs = Booking.objects.select_related('user', 'venue').all()
+
+    # Фильтры
+    status = request.GET.get('status', '').strip()
+    venue_id = request.GET.get('venue', '').strip()
+
+    if status:
+        qs = qs.filter(status=status)
+    if venue_id.isdigit():
+        qs = qs.filter(venue_id=int(venue_id))
+
+    # Сортировка
+    order = request.GET.get('order', '-created_at')
+    allowed = {'created_at', '-created_at', 'start_datetime', '-start_datetime', 'status', '-status'}
+    if order not in allowed:
+        order = '-created_at'
+    qs = qs.order_by(order)
+
+    # Пагинация
+    paginator = Paginator(qs, 10)  # по 10 записей
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    from .models import Venue
+    venues = Venue.objects.all()
+
+    return render(request, 'admin_panel.html', {
+        'page_obj': page_obj,
+        'venues': venues,
+        'status': status,
+        'venue_id': venue_id,
+        'order': order,
+    })
 
 
 # Изменение статуса заявки
@@ -94,6 +128,7 @@ def update_booking_status(request, booking_id, new_status):
     booking = Booking.objects.get(id=booking_id)
     booking.status = new_status
     booking.save()
+    messages.success(request, f"Статус заявки #{booking.id} изменён.")
     return redirect('admin_panel')
 
 from .models import Review

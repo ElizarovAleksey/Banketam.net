@@ -1,29 +1,101 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<h2>Личный кабинет</h2>
 
-<p>
-    <a href="{% url 'create_booking' %}">Создать новую заявку</a>
-</p>
+<div class="card">
+  <div class="title">Личный кабинет</div>
+  <div class="muted">Ваши заявки и история бронирований</div>
+</div>
 
-<h3>Мои заявки:</h3>
+<div class="card">
+  <div class="title">Фотогалерея</div>
 
-{% if bookings %}
-    <ul>
-        {% for booking in bookings %}
-            <li>
-                Помещение: {{ booking.venue.name }} |
-                Дата: {{ booking.start_datetime }} |
-                Статус: {{ booking.get_status_display }}
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>У вас пока нет заявок.</p>
-{% endif %}
+  <div id="slider" style="position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--border);">
+    <div id="slides" style="display:flex; transition: transform .35s ease;">
+      <img src="{% static 'img/slide1.jpg' %}" style="width:100%; flex:0 0 100%; height:220px; object-fit:cover;">
+      <img src="{% static 'img/slide2.jpg' %}" style="width:100%; flex:0 0 100%; height:220px; object-fit:cover;">
+      <img src="{% static 'img/slide3.jpg' %}" style="width:100%; flex:0 0 100%; height:220px; object-fit:cover;">
+      <img src="{% static 'img/slide4.jpg' %}" style="width:100%; flex:0 0 100%; height:220px; object-fit:cover;">
+    </div>
 
-{% if booking.status == 'completed' and not booking.review %}
-    | <a href="{% url 'add_review' booking.id %}">Оставить отзыв</a>
-{% endif %}
+    <button class="btn" id="prev" type="button" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);">‹</button>
+    <button class="btn" id="next" type="button" style="position:absolute; right:10px; top:50%; transform:translateY(-50%);">›</button>
+  </div>
+
+  <div class="muted" style="margin-top:10px;">Автопереключение каждые 3 секунды</div>
+</div>
+
+<script>
+(function(){
+  const slides = document.getElementById('slides');
+  const total = slides.children.length;
+  let i = 0;
+  let timer = null;
+
+  function go(n){
+    i = (n + total) % total;
+    slides.style.transform = `translateX(${-i*100}%)`;
+  }
+  function start(){
+    stop();
+    timer = setInterval(()=>go(i+1), 3000);
+  }
+  function stop(){
+    if(timer) clearInterval(timer);
+    timer = null;
+  }
+
+  document.getElementById('prev').addEventListener('click', ()=>{ go(i-1); start(); });
+  document.getElementById('next').addEventListener('click', ()=>{ go(i+1); start(); });
+
+  slides.addEventListener('mouseenter', stop);
+  slides.addEventListener('mouseleave', start);
+  start();
+})();
+</script>
+
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+    <div class="title" style="margin:0;">Мои заявки</div>
+    <a class="btn btn-primary" href="{% url 'create_booking' %}">Создать заявку</a>
+  </div>
+
+  {% if bookings %}
+    {% for b in bookings %}
+      <div class="card" style="margin:12px 0; padding:12px;">
+        <div style="display:flex; justify-content:space-between; gap:10px;">
+          <div>
+            <div><strong>{{ b.venue.name }}</strong></div>
+            <div class="muted">Дата: {{ b.start_datetime|date:"d.m.Y H:i" }}</div>
+            <div class="muted">Оплата: {{ b.get_payment_method_display }}</div>
+          </div>
+
+          <div>
+            {% if b.status == 'new' %}
+              <span class="badge badge-new">Новая</span>
+            {% elif b.status == 'confirmed' %}
+              <span class="badge badge-confirmed">Банкет назначен</span>
+            {% else %}
+              <span class="badge badge-completed">Банкет завершен</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          {% if b.status == 'completed' and not b.review %}
+            <a class="btn btn-primary" href="{% url 'add_review' b.id %}">Оставить отзыв</a>
+          {% elif b.review %}
+            <span class="muted">Отзыв оставлен </span>
+          {% else %}
+            <span class="muted">Отзыв будет доступен после завершения банкета</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="muted">У вас пока нет заявок.</p>
+  {% endif %}
+</div>
+
 {% endblock %}

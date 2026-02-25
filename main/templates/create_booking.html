@@ -1,12 +1,30 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h2>Создание заявки</h2>
+<div class="card">
+  <div class="title">Оформление заявки</div>
 
-<form method="post">
+  <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Отправить заявку</button>
-</form>
 
+    <div class="field">
+      <label>{{ form.venue.label }}</label>
+      {{ form.venue }}
+      {% for e in form.venue.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label>{{ form.start_date.label }}</label>
+      <input class="input" type="text" name="start_date" placeholder="ДД.ММ.ГГГГ" value="{{ form.start_date.value|default:'' }}">
+      {% for e in form.start_date.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label>{{ form.payment_method.label }}</label>
+      {{ form.payment_method }}
+      {% for e in form.payment_method.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <button class="btn btn-primary" type="submit">Отправить заявку</button>
+  </form>
+</div>
 {% endblock %}

@@ -1,24 +1,52 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h2>Регистрация</h2>
+<div class="card">
+  <div class="title">Регистрация</div>
 
-{% if form.errors %}
-    <div style="color: red;">
-        <strong>Ошибки формы:</strong>
-        {{ form.errors }}
-    </div>
-{% endif %}
-
-<form method="post">
+  <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Зарегистрироваться</button>
-</form>
 
-<p>
-    Уже есть аккаунт?
-    <a href="{% url 'login' %}">Войти</a>
-</p>
+    <div class="field">
+      <label>{{ form.username.label }}</label>
+      {{ form.username }}
+      {% for e in form.username.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
 
+    <div class="field">
+      <label>{{ form.first_name.label }}</label>
+      {{ form.first_name }}
+      {% for e in form.first_name.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label>{{ form.email.label }}</label>
+      {{ form.email }}
+      {% for e in form.email.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label>{{ form.phone.label }}</label>
+      {{ form.phone }}
+      {% for e in form.phone.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label>{{ form.password1.label }}</label>
+      {{ form.password1 }}
+      {% for e in form.password1.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label>{{ form.password2.label }}</label>
+      {{ form.password2 }}
+      {% for e in form.password2.errors %}<div class="help-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+  </form>
+
+  <p class="muted" style="margin-top:12px;">
+    Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+  </p>
+</div>
 {% endblock %}

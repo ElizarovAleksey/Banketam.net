@@ -1,0 +1,221 @@
+/* ===== Шрифт Oswald (локально) ===== */
+@font-face{
+  font-family: 'Oswald';
+  src: url('../fonts/Oswald-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face{
+  font-family: 'Oswald';
+  src: url('../fonts/Oswald-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+:root{
+  /* Палитра из ТЗ */
+  --gold: #DAA520;        
+  --rose-gold: #FFDAB9;   
+  --cream: #FFFDD0;       
+  --crimson: #DC143C;     
+  --dark-green: #006400;  
+
+  /* Базовые цвета интерфейса */
+  --bg: var(--cream);
+  --card: #ffffff;
+  --text: #000000;
+  --muted: var(--dark-green);
+  --border: rgba(0,0,0,.10);
+  --shadow: 0 10px 24px rgba(0,0,0,.08);
+}
+
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family:'Oswald', Arial, sans-serif;
+  background:
+    radial-gradient(700px 420px at 20% 0%, rgba(218,165,32,.25) 0%, rgba(255,253,208,1) 60%),
+    radial-gradient(700px 420px at 90% 10%, rgba(220,20,60,.18) 0%, rgba(255,253,208,1) 55%);
+  color: var(--text);
+}
+
+/* Контейнер под смартфон 390×844 */
+.container{
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Верхняя панель */
+.appbar{
+  position: sticky;
+  top:0;
+  background: rgba(255,253,208,.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 14px 16px 8px;
+}
+.brand h1{
+  margin:0;
+  font-size: 36px;              
+  color: var(--crimson);        
+  letter-spacing: .8px;
+  line-height: 1.05;
+}
+
+/* Навигация */
+.nav{
+  display:flex;
+  gap:10px;
+  padding: 0 16px 14px;
+  flex-wrap: wrap;
+}
+.nav a{
+  color: var(--text);
+  text-decoration:none;
+  font-size: 16px;
+  padding: 10px 12px;
+  border: 1px solid rgba(218,165,32,.35);
+  border-radius: 12px;
+  background: rgba(255,218,185,.45); 
+}
+.nav a:hover{
+  border-color: rgba(220,20,60,.45);
+}
+
+/* Карточки */
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  margin: 14px 0;
+  box-shadow: var(--shadow);
+}
+
+/* Заголовки */
+.title{
+  margin: 6px 0 12px;
+  font-size: 24px;              
+  color: var(--gold);           
+  letter-spacing: .6px;
+}
+h3{
+  font-size: 18px;              
+  color: var(--gold);
+  margin: 10px 0 8px;
+}
+
+/* Текст */
+p, li, td, th{
+  font-size: 16px;             
+  color: var(--text);
+}
+.muted{
+  font-size: 12px;              
+  color: var(--dark-green);
+}
+
+/* Кнопки */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(218,165,32,.45);
+  background: rgba(255,218,185,.55);
+  color: var(--text);
+  text-decoration:none;
+  cursor:pointer;
+  font-size: 16px;
+}
+.btn-primary{
+  background: rgba(220,20,60,.12);
+  border-color: rgba(220,20,60,.35);
+}
+.btn-danger{
+  background: rgba(220,20,60,.16);
+  border-color: rgba(220,20,60,.45);
+}
+.btn:active{ transform: translateY(1px); }
+
+/* Поля форм */
+.field{ margin: 12px 0; }
+.field label{
+  display:block;
+  margin-bottom:8px;
+  font-size: 12px;
+  color: var(--dark-green);
+  letter-spacing: .3px;
+}
+.input, select, textarea{
+  width:100%;
+  padding: 14px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.14);
+  background: #fff;
+  color: var(--text);
+  outline:none;
+  font-size: 16px;
+}
+.input:focus, select:focus, textarea:focus{
+  border-color: rgba(220,20,60,.45);
+  box-shadow: 0 0 0 3px rgba(220,20,60,.10);
+}
+
+.help-error{
+  margin-top:6px;
+  color: var(--crimson);
+  font-size: 12px;
+}
+
+/* Статусы */
+.badge{
+  display:inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,253,208,.85);
+}
+.badge-new{ border-color: rgba(218,165,32,.55); }
+.badge-confirmed{ border-color: rgba(0,100,0,.35); }
+.badge-completed{ border-color: rgba(220,20,60,.35); }
+
+/* Таблица (админка) */
+.table{
+  width:100%;
+  border-collapse: collapse;
+}
+.table th, .table td{
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(0,0,0,.10);
+  vertical-align: top;
+}
+.table th{
+  font-size: 12px;
+  color: var(--dark-green);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+}
+
+/* Мобильные (390×844) */
+@media (min-width: 900px){
+  .container{ padding: 28px 24px; }  /* на ПК чуть больше воздуха */
+}
+@media (max-width: 420px){
+  .container{ padding: 18px; }
+  .brand h1{ font-size: 34px; }  /* почти 36, но чуть мягче на экране */
+  .nav a{ font-size: 16px; padding: 12px 14px; }
+  .card{ padding: 16px; }
+  #slider img{ height: 240px !important; }
+}

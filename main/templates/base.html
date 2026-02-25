@@ -1,35 +1,38 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Банкетам.Нет</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Банкетам.Нет</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
 
-    <h1>Портал "Банкетам.Нет"</h1>
-
-    {% if user.username == "Admin26" %}
-    | <a href="{% url 'admin_panel' %}">Панель администратора</a>
-    {% endif %}
-
-    {% if user.is_authenticated %}
-        <p>
-            Вы вошли как: {{ user.username }} |
-            <a href="{% url 'cabinet' %}">Личный кабинет</a> |
+<div class="appbar">
+  <div class="container">
+    <div class="brand">
+      <h1>Банкетам.Нет</h1>
+        </div>
+        <div class="nav">
+            {% if user.is_authenticated %}
+            <a href="{% url 'cabinet' %}">Кабинет</a>
+            <a href="{% url 'create_booking' %}">Новая заявка</a>
+            {% if user.username == "Admin26" %}
+                <a href="{% url 'admin_panel' %}">Админ</a>
+            {% endif %}
             <a href="{% url 'logout' %}">Выйти</a>
-        </p>
-    {% else %}
-    
-        <p>
-            <a href="{% url 'login' %}">Войти</a> |
+            {% else %}
+            <a href="{% url 'login' %}">Войти</a>
             <a href="{% url 'register' %}">Регистрация</a>
-        </p>
-    {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
 
-    <hr>
-
-    {% block content %}
-    {% endblock %}
+<div class="container">
+  {% block content %}{% endblock %}
+</div>
 
 </body>
 </html>

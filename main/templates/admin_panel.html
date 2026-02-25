@@ -1,31 +1,90 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h2>Панель администратора</h2>
+<div class="card">
+  <div class="title">Панель администратора</div>
 
-<h3>Все заявки:</h3>
+  {% if messages %}
+    {% for m in messages %}
+      <div class="card" style="border-color: rgba(54,211,153,.35);">
+        {{ m }}
+      </div>
+    {% endfor %}
+  {% endif %}
 
-{% if bookings %}
-    <ul>
-        {% for booking in bookings %}
-            <li>
-                Пользователь: {{ booking.user.username }} |
-                Помещение: {{ booking.venue.name }} |
-                Дата: {{ booking.start_datetime }} |
-                Статус: {{ booking.get_status_display }}
+  <form method="get" style="display:flex; gap:10px; flex-wrap:wrap;">
+    <select name="status">
+      <option value="">Все статусы</option>
+      <option value="new" {% if status == 'new' %}selected{% endif %}>Новая</option>
+      <option value="confirmed" {% if status == 'confirmed' %}selected{% endif %}>Банкет назначен</option>
+      <option value="completed" {% if status == 'completed' %}selected{% endif %}>Банкет завершен</option>
+    </select>
 
-                {% if booking.status == 'new' %}
-                    | <a href="{% url 'update_booking_status' booking.id 'confirmed' %}">Назначить</a>
-                {% endif %}
+    <select name="venue">
+      <option value="">Все помещения</option>
+      {% for v in venues %}
+        <option value="{{ v.id }}" {% if venue_id|add:'' == v.id|add:'' %}selected{% endif %}>{{ v.name }}</option>
+      {% endfor %}
+    </select>
 
-                {% if booking.status == 'confirmed' %}
-                    | <a href="{% url 'update_booking_status' booking.id 'completed' %}">Завершить</a>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Заявок пока нет.</p>
-{% endif %}
+    <select name="order">
+      <option value="-created_at" {% if order == '-created_at' %}selected{% endif %}>Сначала новые</option>
+      <option value="created_at" {% if order == 'created_at' %}selected{% endif %}>Сначала старые</option>
+      <option value="-start_datetime" {% if order == '-start_datetime' %}selected{% endif %}>Дата банкета ↓</option>
+      <option value="start_datetime" {% if order == 'start_datetime' %}selected{% endif %}>Дата банкета ↑</option>
+      <option value="status" {% if order == 'status' %}selected{% endif %}>Статус ↑</option>
+      <option value="-status" {% if order == '-status' %}selected{% endif %}>Статус ↓</option>
+    </select>
 
+    <button class="btn btn-primary" type="submit">Применить</button>
+  </form>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Пользователь</th>
+        <th>Помещение</th>
+        <th>Дата</th>
+        <th>Статус</th>
+        <th>Действие</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in page_obj %}
+        <tr>
+          <td>#{{ b.id }}</td>
+          <td>{{ b.user.username }}</td>
+          <td>{{ b.venue.name }}</td>
+          <td>{{ b.start_datetime|date:"d.m.Y H:i" }}</td>
+          <td>{{ b.get_status_display }}</td>
+          <td>
+            {% if b.status == 'new' %}
+              <a class="btn btn-primary" href="{% url 'update_booking_status' b.id 'confirmed' %}" onclick="return confirm('Назначить банкет?')">Назначить</a>
+            {% elif b.status == 'confirmed' %}
+              <a class="btn" href="{% url 'update_booking_status' b.id 'completed' %}" onclick="return confirm('Завершить банкет?')">Завершить</a>
+            {% else %}
+              <span class="muted">—</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="muted">Заявок нет</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+    <div class="muted">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</div>
+    <div style="display:flex; gap:8px;">
+      {% if page_obj.has_previous %}
+        <a class="btn" href="?page={{ page_obj.previous_page_number }}&status={{ status }}&venue={{ venue_id }}&order={{ order }}">‹ Назад</a>
+      {% endif %}
+      {% if page_obj.has_next %}
+        <a class="btn" href="?page={{ page_obj.next_page_number }}&status={{ status }}&venue={{ venue_id }}&order={{ order }}">Вперёд ›</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}

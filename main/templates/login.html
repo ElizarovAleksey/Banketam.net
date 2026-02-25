@@ -1,17 +1,32 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h2>Вход в систему</h2>
+<div class="card">
+  <div class="title">Вход</div>
 
-<form method="post">
+  {% if form.non_field_errors %}
+    {% for e in form.non_field_errors %}
+      <div class="help-error">{{ e }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Войти</button>
-</form>
 
-<p>
-    Еще не зарегистрированы?
-    <a href="{% url 'register' %}">Регистрация</a>
-</p>
+    <div class="field">
+      <label>Логин</label>
+      {{ form.username }}
+    </div>
 
+    <div class="field">
+      <label>Пароль</label>
+      {{ form.password }}
+    </div>
+
+    <button class="btn btn-primary" type="submit">Войти</button>
+  </form>
+
+  <p class="muted" style="margin-top:12px;">
+    Еще не зарегистрированы? <a href="{% url 'register' %}">Регистрация</a>
+  </p>
+</div>
 {% endblock %}

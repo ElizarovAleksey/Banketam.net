@@ -3,7 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 import re
 from .models import CustomUser, Booking
-
+from django.utils import timezone
+from datetime import datetime, time
 
 # =====================================
 # Форма регистрации пользователя
@@ -34,14 +35,30 @@ class RegisterForm(UserCreationForm):
 # Форма создания заявки
 # =====================================
 class BookingForm(forms.ModelForm):
+    # Дата в формате ДД.ММ.ГГГГ 
+    start_date = forms.CharField(label="Дата начала (ДД.ММ.ГГГГ)")
+
     class Meta:
         model = Booking
-        fields = ['venue', 'start_datetime', 'payment_method']
+        fields = ['venue', 'start_date', 'payment_method']
         labels = {
             'venue': 'Выберите помещение',
-            'start_datetime': 'Дата и время начала',
             'payment_method': 'Способ оплаты',
         }
-        widgets = {
-            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-        }
+
+    def clean_start_date(self):
+        value = self.cleaned_data['start_date'].strip()
+        try:
+            dt = datetime.strptime(value, "%d.%m.%Y")
+        except ValueError:
+            raise forms.ValidationError("Введите дату в формате ДД.ММ.ГГГГ")
+        return dt.date()
+
+    def save(self, commit=True):
+        obj = super().save(commit=False)
+        # Время можно поставить фиксированное
+        d = self.cleaned_data['start_date']
+        obj.start_datetime = datetime.combine(d, time(18, 0))
+        if commit:
+            obj.save()
+        return obj
